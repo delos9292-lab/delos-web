@@ -35,8 +35,23 @@ export default function BudgetForm({
   const [manoObra, setManoObra] = useState("");
 
 
+  const [materiales, setMateriales] = useState<any[]>([]);
 
-  const [materiales,setMateriales] = useState<any[]>([]);
+
+
+
+  const totalMateriales = materiales.reduce(
+
+    (total, item) => total + item.precio,
+
+    0
+
+  );
+
+
+  const totalGeneral =
+
+    totalMateriales + Number(manoObra || 0);
 
 
 
@@ -45,24 +60,23 @@ export default function BudgetForm({
   function agregarMaterial(){
 
 
-    if(!descripcion || !precio) return;
+    if(!descripcion || !precio){
+
+      return;
+
+    }
 
 
 
     const nuevoMaterial = {
 
-
       id: Date.now(),
-
 
       descripcion,
 
+      cantidad: 1,
 
-      cantidad:1,
-
-
-      precio:Number(precio)
-
+      precio: Number(precio),
 
     };
 
@@ -88,29 +102,30 @@ export default function BudgetForm({
 
 
 
-  function crearPresupuesto(){
+
+  function eliminarMaterial(id:number){
 
 
-    const totalMateriales = materiales.reduce(
+    setMateriales(
 
-      (total,item)=>
+      materiales.filter(
 
-        total + item.precio,
+        item => item.id !== id
 
-      0
+      )
 
     );
 
 
-
-    const total =
-
-      totalMateriales +
-
-      Number(manoObra || 0);
+  }
 
 
 
+
+
+
+
+  function crearPresupuesto(){
 
 
     const presupuesto = {
@@ -131,10 +146,10 @@ export default function BudgetForm({
       items: materiales,
 
 
-      manoObra:Number(manoObra || 0),
+      manoObra: Number(manoObra || 0),
 
 
-      total,
+      total: totalGeneral,
 
 
       estado:"Borrador"
@@ -147,8 +162,11 @@ export default function BudgetForm({
     guardarPresupuesto(presupuesto);
 
 
+    alert("Presupuesto guardado correctamente 🚀");
+
 
   }
+
 
 
 
@@ -161,7 +179,7 @@ export default function BudgetForm({
     <div className="bg-white rounded-3xl shadow-md p-8 max-w-xl mx-auto">
 
 
-      <h2 className="text-3xl font-bold text-[#2E2E2D]">
+      <h2 className="text-3xl font-bold text-[#2E2E2E]">
 
         💰 Nuevo presupuesto
 
@@ -171,7 +189,9 @@ export default function BudgetForm({
 
       <p className="mt-2 text-gray-600">
 
-        Cliente: {clienteNombre}
+        Cliente:
+
+        <strong> {clienteNombre}</strong>
 
       </p>
 
@@ -180,9 +200,10 @@ export default function BudgetForm({
 
 
 
+
       <input
 
-        className="mt-6 w-full rounded-xl border p-3 text-gray-800"
+        className="mt-6 w-full rounded-xl border border-gray-300 p-3 text-gray-800 bg-white"
 
         placeholder="Trabajo a realizar"
 
@@ -197,12 +218,14 @@ export default function BudgetForm({
 
 
 
+
+
       <div className="mt-6 flex gap-3">
 
 
         <input
 
-          className="flex-1 rounded-xl border p-3 text-gray-800"
+          className="flex-1 rounded-xl border border-gray-300 p-3 text-gray-800 bg-white"
 
           placeholder="Material"
 
@@ -216,7 +239,7 @@ export default function BudgetForm({
 
         <input
 
-          className="w-32 rounded-xl border p-3 text-gray-800"
+          className="w-32 rounded-xl border border-gray-300 p-3 text-gray-800 bg-white"
 
           placeholder="Precio"
 
@@ -229,8 +252,8 @@ export default function BudgetForm({
         />
 
 
-
       </div>
+
 
 
 
@@ -241,7 +264,7 @@ export default function BudgetForm({
 
         onClick={agregarMaterial}
 
-        className="mt-4 w-full rounded-xl bg-[#2E2E2E] py-3 text-white font-bold"
+        className="mt-4 w-full rounded-xl bg-[#2E2E2E] py-3 text-white font-bold hover:bg-black"
 
       >
 
@@ -256,7 +279,8 @@ export default function BudgetForm({
 
 
 
-      <div className="mt-6 space-y-2">
+
+      <div className="mt-6 space-y-3">
 
 
         {
@@ -264,18 +288,51 @@ export default function BudgetForm({
           materiales.map((item)=>(
 
 
-          <div
-  key={item.id}
-  className="flex justify-between bg-gray-100 rounded-xl p-3 text-gray-800 font-semibold"
->
-  <span>
-    🔧 {item.descripcion}
-  </span>
+            <div
 
-  <span>
-    ${item.precio}
-  </span>
-</div>
+              key={item.id}
+
+              className="flex justify-between items-center bg-gray-100 rounded-xl p-4 text-gray-800"
+
+            >
+
+
+              <div>
+
+
+                <p className="font-bold">
+
+                  🔧 {item.descripcion}
+
+                </p>
+
+
+                <p>
+
+                  ${item.precio.toLocaleString("es-AR")}
+
+                </p>
+
+
+              </div>
+
+
+
+
+              <button
+
+                onClick={()=>eliminarMaterial(item.id)}
+
+                className="text-red-600 font-bold"
+
+              >
+
+                ✖
+
+              </button>
+
+
+            </div>
 
 
           ))
@@ -291,9 +348,11 @@ export default function BudgetForm({
 
 
 
+
+
       <input
 
-        className="mt-6 w-full rounded-xl border p-3 text-gray-800"
+        className="mt-6 w-full rounded-xl border border-gray-300 p-3 text-gray-800 bg-white"
 
         placeholder="Mano de obra"
 
@@ -311,6 +370,66 @@ export default function BudgetForm({
 
 
 
+
+
+      <div className="mt-6 rounded-2xl bg-gray-100 p-5 text-gray-800">
+
+
+        <p className="font-semibold">
+
+          Materiales:
+
+          {" "}
+
+          ${totalMateriales.toLocaleString("es-AR")}
+
+        </p>
+
+
+
+
+        <p className="mt-2 font-semibold">
+
+          Mano de obra:
+
+          {" "}
+
+          ${(Number(manoObra)||0).toLocaleString("es-AR")}
+
+        </p>
+
+
+
+
+
+        <hr className="my-4"/>
+
+
+
+
+
+        <p className="text-2xl font-bold">
+
+          TOTAL:
+
+          {" "}
+
+          ${totalGeneral.toLocaleString("es-AR")}
+
+        </p>
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
       <button
 
         onClick={crearPresupuesto}
@@ -319,7 +438,7 @@ export default function BudgetForm({
 
       >
 
-        Guardar presupuesto
+        💾 Guardar presupuesto
 
       </button>
 
