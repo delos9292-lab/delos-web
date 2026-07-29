@@ -48,14 +48,40 @@ export default function Home() {
     return (
 
       <main className="min-h-screen bg-gray-100 p-8">
+<ClientDetail
 
-        <ClientDetail
+  cliente={clienteSeleccionado}
 
-          cliente={clienteSeleccionado}
 
-          volver={() => setClienteSeleccionado(null)}
+  volver={() => setClienteSeleccionado(null)}
 
-        />
+
+  actualizarCliente={(clienteActualizado) => {
+
+
+    const nuevosClientes = clientes.map((cliente) =>
+
+
+      cliente.id === clienteActualizado.id
+
+        ? clienteActualizado
+
+        : cliente
+
+
+    );
+
+
+    setClientes(nuevosClientes);
+
+
+    setClienteSeleccionado(clienteActualizado);
+
+
+  }}
+
+
+/>
 
       </main>
 

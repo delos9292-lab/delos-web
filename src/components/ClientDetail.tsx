@@ -10,6 +10,8 @@ type ClientDetailProps = {
 
   volver: () => void;
 
+  actualizarCliente: (clienteActualizado: any) => void;
+
 };
 
 
@@ -20,23 +22,71 @@ export default function ClientDetail({
 
   volver,
 
+  actualizarCliente,
+
 }: ClientDetailProps) {
 
 
   const [mostrarAgenda, setMostrarAgenda] = useState(false);
 
 
-  const [datosVisita, setDatosVisita] = useState<any>(null);
+  const [datosVisita, setDatosVisita] = useState<any>(
+
+    cliente.fechaVisita
+      ? {
+          fecha: cliente.fechaVisita,
+          hora: cliente.horaVisita,
+          tecnico: cliente.tecnico,
+          observaciones: cliente.observaciones,
+        }
+      : null
+
+  );
 
 
 
-  function guardarVisita(datos:any){
+
+  function guardarVisita(datos: any) {
+
+
+    const clienteActualizado = {
+
+
+      ...cliente,
+
+
+      estado: "Visita confirmada",
+
+
+      fechaVisita: datos.fecha,
+
+
+      horaVisita: datos.hora,
+
+
+      tecnico: datos.tecnico,
+
+
+      observaciones: datos.observaciones,
+
+
+    };
+
+
+
+    actualizarCliente(clienteActualizado);
+
+
 
     setDatosVisita(datos);
 
+
+
     setMostrarAgenda(false);
 
+
   }
+
 
 
 
@@ -59,6 +109,7 @@ export default function ClientDetail({
 
 
 
+
       <h2 className="text-3xl font-bold text-[#2E2E2E]">
 
         {cliente.nombre}
@@ -77,10 +128,12 @@ export default function ClientDetail({
         </p>
 
 
+
         <p>
           📞 Teléfono:
           <strong> {cliente.telefono || "Sin cargar"}</strong>
         </p>
+
 
 
         <p>
@@ -89,10 +142,12 @@ export default function ClientDetail({
         </p>
 
 
+
         <p>
           📌 Estado:
           <strong> {cliente.estado}</strong>
         </p>
+
 
 
         <p>
@@ -107,52 +162,64 @@ export default function ClientDetail({
 
 
 
+
+      {datosVisita && (
+
+
+        <div className="mt-8 rounded-2xl bg-green-600 p-5 text-white shadow-md">
+
+
+          <h3 className="text-xl font-bold">
+
+            🟢 Visita confirmada
+
+          </h3>
+
+
+
+          <p className="mt-3">
+
+            📅 {datosVisita.fecha}
+
+          </p>
+
+
+
+          <p>
+
+            ⏰ {datosVisita.hora}
+
+          </p>
+
+
+
+          <p>
+
+            👷 {datosVisita.tecnico}
+
+          </p>
+
+
+
+          <p>
+
+            📝 {datosVisita.observaciones}
+
+          </p>
+
+
+        </div>
+
+
+      )}
+
+
+
+
+
+
       {
-        datosVisita && (
 
-<div className="mt-8 rounded-2xl bg-green-600 p-5 text-white shadow-md">
-
-
-  <h3 className="text-xl font-bold text-white">
-
-    🟢 Visita confirmada
-
-  </h3>
-
-
-  <p className="mt-3 text-white">
-    📅 {datosVisita.fecha}
-  </p>
-
-
-  <p className="text-white">
-    ⏰ {datosVisita.hora}
-  </p>
-
-
-  <p className="text-white">
-    👷 {datosVisita.tecnico}
-  </p>
-
-
-  <p className="text-white">
-    📝 {datosVisita.observaciones}
-  </p>
-
-
-</div>
-
-        )
-
-      }
-
-
-
-
-
-
-
-      {
         mostrarAgenda ? (
 
 
@@ -165,9 +232,7 @@ export default function ClientDetail({
 
         )
 
-
         :
-
 
         (
 
@@ -177,7 +242,7 @@ export default function ClientDetail({
 
             <button
 
-              onClick={()=>setMostrarAgenda(true)}
+              onClick={() => setMostrarAgenda(true)}
 
               className="rounded-xl bg-[#007BFF] py-3 text-white font-bold"
 
@@ -219,6 +284,7 @@ export default function ClientDetail({
 
 
         )
+
 
       }
 
