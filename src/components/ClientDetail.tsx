@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+
 import ScheduleVisit from "./ScheduleVisit";
+import BudgetForm from "./BudgetForm";
 
 
 type ClientDetailProps = {
@@ -29,16 +31,26 @@ export default function ClientDetail({
 
   const [mostrarAgenda, setMostrarAgenda] = useState(false);
 
+  const [mostrarPresupuesto, setMostrarPresupuesto] = useState(false);
+
+
 
   const [datosVisita, setDatosVisita] = useState<any>(
 
     cliente.fechaVisita
+
       ? {
+
           fecha: cliente.fechaVisita,
+
           hora: cliente.horaVisita,
+
           tecnico: cliente.tecnico,
+
           observaciones: cliente.observaciones,
+
         }
+
       : null
 
   );
@@ -46,7 +58,8 @@ export default function ClientDetail({
 
 
 
-  function guardarVisita(datos: any) {
+
+  function guardarVisita(datos:any){
 
 
     const clienteActualizado = {
@@ -77,12 +90,11 @@ export default function ClientDetail({
     actualizarCliente(clienteActualizado);
 
 
-
     setDatosVisita(datos);
 
 
-
     setMostrarAgenda(false);
+
 
 
   }
@@ -90,9 +102,47 @@ export default function ClientDetail({
 
 
 
+
+
+
+  function guardarPresupuesto(presupuesto:any){
+
+
+    console.log(
+
+      "Presupuesto creado:",
+
+      presupuesto
+
+    );
+
+
+    alert(
+
+      "Presupuesto creado correctamente 🚀"
+
+    );
+
+
+    setMostrarPresupuesto(false);
+
+
+  }
+
+
+
+
+
+
+
+
   return (
 
+
     <div className="bg-white rounded-3xl shadow-md p-8 max-w-xl mx-auto">
+
+
+
 
 
       <button
@@ -110,6 +160,9 @@ export default function ClientDetail({
 
 
 
+
+
+
       <h2 className="text-3xl font-bold text-[#2E2E2E]">
 
         {cliente.nombre}
@@ -119,44 +172,95 @@ export default function ClientDetail({
 
 
 
+
+
+
       <div className="mt-6 space-y-3 text-gray-700">
 
 
         <p>
+
           📍 Localidad:
+
           <strong> {cliente.localidad}</strong>
+
         </p>
 
 
 
+
         <p>
+
           📞 Teléfono:
-          <strong> {cliente.telefono || "Sin cargar"}</strong>
+
+          <strong>
+
+            {" "}
+
+            {cliente.telefono || "Sin cargar"}
+
+          </strong>
+
         </p>
 
 
 
+
         <p>
+
           🏠 Dirección:
-          <strong> {cliente.direccion || "Sin cargar"}</strong>
+
+          <strong>
+
+            {" "}
+
+            {cliente.direccion || "Sin cargar"}
+
+          </strong>
+
         </p>
 
 
 
+
         <p>
+
           📌 Estado:
-          <strong> {cliente.estado}</strong>
+
+          <strong>
+
+            {" "}
+
+            {cliente.estado}
+
+          </strong>
+
         </p>
+
 
 
 
         <p>
+
           🛠 Problema:
-          <strong> {cliente.problema}</strong>
+
+          <strong>
+
+            {" "}
+
+            {cliente.problema}
+
+          </strong>
+
         </p>
+
 
 
       </div>
+
+
+
+
 
 
 
@@ -179,7 +283,7 @@ export default function ClientDetail({
 
           <p className="mt-3">
 
-            📅 {datosVisita.fecha}
+            📅 Fecha: {datosVisita.fecha}
 
           </p>
 
@@ -187,7 +291,7 @@ export default function ClientDetail({
 
           <p>
 
-            ⏰ {datosVisita.hora}
+            ⏰ Hora: {datosVisita.hora}
 
           </p>
 
@@ -195,7 +299,7 @@ export default function ClientDetail({
 
           <p>
 
-            👷 {datosVisita.tecnico}
+            👷 Técnico: {datosVisita.tecnico}
 
           </p>
 
@@ -218,33 +322,85 @@ export default function ClientDetail({
 
 
 
+
+
+
       {
+        mostrarPresupuesto && (
 
-        mostrarAgenda ? (
+
+          <div className="mt-8">
 
 
-          <ScheduleVisit
+            <BudgetForm
 
-            guardarVisita={guardarVisita}
 
-          />
+              clienteId={cliente.id}
+
+
+              clienteNombre={cliente.nombre}
+
+
+
+              guardarPresupuesto={guardarPresupuesto}
+
+
+            />
+
+
+          </div>
 
 
         )
 
+      }
+
+
+
+
+
+
+
+
+
+      {
+        mostrarAgenda ? (
+
+
+          <div className="mt-8">
+
+
+            <ScheduleVisit
+
+              guardarVisita={guardarVisita}
+
+            />
+
+
+          </div>
+
+
+        )
+
+
         :
+
 
         (
 
 
+          !mostrarPresupuesto && (
+
+
           <div className="mt-8 flex flex-col gap-3">
+
 
 
             <button
 
               onClick={() => setMostrarAgenda(true)}
 
-              className="rounded-xl bg-[#007BFF] py-3 text-white font-bold"
+              className="rounded-xl bg-[#007BFF] py-3 text-white font-bold hover:bg-blue-700"
 
             >
 
@@ -255,15 +411,21 @@ export default function ClientDetail({
 
 
 
+
+
             <button
 
-              className="rounded-xl bg-[#2E2E2E] py-3 text-white font-bold"
+              onClick={() => setMostrarPresupuesto(true)}
+
+              className="rounded-xl bg-[#2E2E2E] py-3 text-white font-bold hover:bg-black"
 
             >
 
               💰 Crear presupuesto
 
             </button>
+
+
 
 
 
@@ -283,6 +445,8 @@ export default function ClientDetail({
           </div>
 
 
+          )
+
         )
 
 
@@ -290,7 +454,11 @@ export default function ClientDetail({
 
 
 
+
+
+
     </div>
+
 
   );
 
