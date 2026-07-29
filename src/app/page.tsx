@@ -3,58 +3,124 @@
 import { useState } from "react";
 import Button from "../components/Button";
 import ClientCard from "../components/ClientCard";
+import StatsCard from "../components/StatsCard";
+import { clients } from "../data/clients";
 
 export default function Home() {
+
   const [mensaje, setMensaje] = useState("");
 
+  const clientesTotales = clients.length;
+
+  const visitasConfirmadas = clients.filter(
+    (client) => client.estado === "Visita confirmada"
+  ).length;
+
+  const pendientes = clients.filter(
+    (client) => client.estado === "Pendiente de visita"
+  ).length;
+
+
   return (
-    <main className="min-h-screen bg-[#007BFF] flex items-center justify-center">
-      <div className="text-center px-8 py-16">
+    <main className="min-h-screen bg-gray-100 p-8">
 
-        <h1 className="text-7xl italic font-bold text-[#2E2E2E] underline underline-offset-8">
-          DelOs
-        </h1>
+      <div className="max-w-6xl mx-auto">
 
-        <p className="mt-8 text-2xl text-white font-light">
-          El sistema operativo para empresas de servicios.
-        </p>
 
-        <p className="mt-4 text-lg text-white/90">
-          Priorizamos al cliente.
-          <br />
-          Potenciamos el tiempo del técnico.
-        </p>
+        <header className="bg-[#007BFF] rounded-3xl p-10 text-center">
 
-        <div className="mt-12">
-          <Button
-            text="Comenzar"
-            onClick={() => setMensaje("Bienvenido a DelOs 🚀")}
-          />
-        </div>
+          <h1 className="text-6xl italic font-bold text-[#2E2E2E] underline">
+            DelOs
+          </h1>
 
-        {mensaje && (
-          <p className="mt-8 text-xl font-semibold text-white">
-            {mensaje}
+          <p className="mt-6 text-2xl text-white">
+            La Mano Maestra
           </p>
-        )}
 
-        <div className="mt-12 flex flex-col gap-6 items-center">
+          <p className="mt-2 text-white/90">
+            Gestión inteligente de servicios.
+          </p>
 
-          <ClientCard
-            nombre="Juan Pérez"
-            localidad="Vicente López"
-            estado="🟡 Esperando presupuesto"
+        </header>
+
+
+        <section className="mt-10 flex flex-wrap gap-6 justify-center">
+
+
+          <StatsCard
+            titulo="Clientes activos"
+            valor={clientesTotales}
+            icono="👥"
           />
 
-          <ClientCard
-            nombre="Consorcio Libertador"
-            localidad="CABA"
-            estado="🟢 Visita programada"
+
+          <StatsCard
+            titulo="Visitas confirmadas"
+            valor={visitasConfirmadas}
+            icono="📅"
           />
+
+
+          <StatsCard
+            titulo="Pendientes"
+            valor={pendientes}
+            icono="⚠️"
+          />
+
+
+        </section>
+
+
+
+        <div className="mt-10 text-center">
+
+          <Button
+            text="Nueva consulta"
+            onClick={() =>
+              setMensaje("Nueva solicitud recibida")
+            }
+          />
+
+          {
+            mensaje && (
+              <p className="mt-5 text-lg font-semibold">
+                {mensaje}
+              </p>
+            )
+          }
 
         </div>
+
+
+
+        <section className="mt-12">
+
+          <h2 className="text-3xl font-bold text-[#2E2E2E] mb-6">
+            Clientes recientes
+          </h2>
+
+
+          <div className="flex flex-col gap-5">
+
+            {clients.map((client) => (
+
+              <ClientCard
+                key={client.id}
+                nombre={client.nombre}
+                localidad={client.localidad}
+                estado={client.estado}
+              />
+
+            ))}
+
+
+          </div>
+
+        </section>
+
 
       </div>
+
     </main>
   );
 }
