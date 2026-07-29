@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+
 
 import Button from "../components/Button";
 import ClientCard from "../components/ClientCard";
@@ -8,13 +10,21 @@ import StatsCard from "../components/StatsCard";
 import NewClientForm from "../components/NewClientForm";
 import ClientDetail from "../components/ClientDetail";
 
+
 import { clients as initialClients } from "../data/clients";
+
+
+import {
+  guardarClientes,
+  cargarClientes
+} from "../lib/storage";
+
 
 
 export default function Home() {
 
 
-  const [clientes, setClientes] = useState(initialClients);
+  const [clientes, setClientes] = useState<any[]>(initialClients);
 
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -24,64 +34,119 @@ export default function Home() {
 
 
 
+  // Cargar datos guardados al iniciar
+
+  useEffect(() => {
+
+
+    const clientesGuardados = cargarClientes();
+
+
+    if (clientesGuardados.length > 0) {
+
+      setClientes(clientesGuardados);
+
+    }
+
+
+  }, []);
+
+
+
+
+
+  // Guardar cada cambio
+
+  useEffect(() => {
+
+
+    guardarClientes(clientes);
+
+
+  }, [clientes]);
+
+
+
+
+
+
   const clientesTotales = clientes.length;
 
 
 
   const visitasConfirmadas = clientes.filter(
-    (client) => client.estado === "🟢 Visita programada"
+
+    (client) => client.estado === "Visita confirmada"
+
   ).length;
 
 
 
   const pendientes = clientes.filter(
-    (client) => client.estado === "🟡 Esperando presupuesto"
+
+    (client) => client.estado === "Pendiente de visita"
+
   ).length;
 
 
 
 
-  // Mostrar ficha del cliente
+
+
 
   if (clienteSeleccionado) {
+
 
     return (
 
       <main className="min-h-screen bg-gray-100 p-8">
-<ClientDetail
-
-  cliente={clienteSeleccionado}
 
 
-  volver={() => setClienteSeleccionado(null)}
+        <ClientDetail
 
 
-  actualizarCliente={(clienteActualizado) => {
+          cliente={clienteSeleccionado}
 
 
-    const nuevosClientes = clientes.map((cliente) =>
+          volver={() => setClienteSeleccionado(null)}
 
 
-      cliente.id === clienteActualizado.id
-
-        ? clienteActualizado
-
-        : cliente
 
 
-    );
+          actualizarCliente={(clienteActualizado) => {
 
 
-    setClientes(nuevosClientes);
+
+            const nuevosClientes = clientes.map((cliente)=>
 
 
-    setClienteSeleccionado(clienteActualizado);
+
+              cliente.id === clienteActualizado.id
+
+              ? clienteActualizado
+
+              : cliente
 
 
-  }}
+
+            );
 
 
-/>
+
+            setClientes(nuevosClientes);
+
+
+
+            setClienteSeleccionado(clienteActualizado);
+
+
+
+          }}
+
+
+
+        />
+
 
       </main>
 
@@ -93,7 +158,11 @@ export default function Home() {
 
 
 
+
+
+
   return (
+
 
     <main className="min-h-screen bg-gray-100 p-8">
 
@@ -143,19 +212,23 @@ export default function Home() {
 
             text={
               mostrarFormulario
-                ? "Volver al dashboard"
-                : "Nueva consulta"
+              ? "Volver al dashboard"
+              : "Nueva consulta"
             }
 
 
-            onClick={() =>
+            onClick={()=>
+
               setMostrarFormulario(!mostrarFormulario)
+
             }
 
           />
 
 
         </div>
+
+
 
 
 
@@ -173,7 +246,7 @@ export default function Home() {
               <NewClientForm
 
 
-                agregarCliente={(nuevoCliente) => {
+                agregarCliente={(nuevoCliente)=>{
 
 
                   setClientes([
@@ -200,10 +273,7 @@ export default function Home() {
 
           )
 
-
-
           :
-
 
 
           (
@@ -212,9 +282,7 @@ export default function Home() {
             <>
 
 
-
               <section className="mt-10 flex flex-wrap gap-6 justify-center">
-
 
 
                 <StatsCard
@@ -252,7 +320,6 @@ export default function Home() {
                 />
 
 
-
               </section>
 
 
@@ -264,7 +331,6 @@ export default function Home() {
               <section className="mt-12">
 
 
-
                 <h2 className="text-3xl font-bold mb-6 text-[#2E2E2E]">
 
                   Clientes recientes
@@ -274,24 +340,22 @@ export default function Home() {
 
 
 
-
-
                 <div className="flex flex-col gap-5">
-
 
 
                   {
 
-                    clientes.map((client) => (
-
+                    clientes.map((client)=>(
 
 
                       <div
 
                         key={client.id}
 
-                        onClick={() =>
+                        onClick={()=>
+
                           setClienteSeleccionado(client)
+
                         }
 
                         className="cursor-pointer"
@@ -299,25 +363,18 @@ export default function Home() {
                       >
 
 
-
                         <ClientCard
-
 
                           nombre={client.nombre}
 
-
                           localidad={client.localidad}
 
-
                           estado={client.estado}
-
 
                         />
 
 
-
                       </div>
-
 
 
                     ))
@@ -325,15 +382,10 @@ export default function Home() {
                   }
 
 
-
                 </div>
 
 
-
-
               </section>
-
-
 
 
             </>
@@ -345,8 +397,6 @@ export default function Home() {
 
 
 
-
-
       </div>
 
 
@@ -354,5 +404,6 @@ export default function Home() {
 
 
   );
+
 
 }
