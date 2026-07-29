@@ -5,13 +5,17 @@ export type ClientStatus =
   | "Trabajo realizado"
   | "Seguimiento";
 
+
 export type ClientType =
   | "Particular"
   | "Consorcio"
   | "Empresa"
   | "Constructora";
 
+
+
 export type Client = {
+
   id: number;
 
   nombre: string;
@@ -28,9 +32,25 @@ export type Client = {
 
   estado: ClientStatus;
 
+
+  // Agenda
+
   fechaVisita?: string;
+
+  horaVisita?: string;
 
   tecnico?: string;
 
+
+  // Gestión comercial
+
   formaPago?: string;
+
+
+  // Seguimiento
+
+  observaciones?: string;
+
+  historial?: string[];
+
 };
